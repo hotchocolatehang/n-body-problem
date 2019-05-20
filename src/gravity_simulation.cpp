@@ -20,13 +20,15 @@ nbp::GravitySimulation::~GravitySimulation()
 
 void nbp::GravitySimulation::ApplyGravity(std::vector<nbp::AbstractBody*> body_ptrs)
 {
-  // TODO: optimize everything. This is just a draft.
+  // TODO: optimize if possible;
+  // make it work with iterators
   std::vector<nbp::vector2<double>> force_sums( body_ptrs.size(), {0, 0});
+  nbp::vector2<double> force;
   for (size_t i = 0; i < body_ptrs.size(); i++) 
   {
     for (size_t j = i + 1; j < body_ptrs.size(); j++) 
     {
-      nbp::vector2<double> force = get_pair_force(body_ptrs[i], body_ptrs[j]);
+      force = get_pair_force(body_ptrs[i], body_ptrs[j]);
       force_sums[i].x += force.x;
       force_sums[i].y += force.y;
 
@@ -42,11 +44,12 @@ void nbp::GravitySimulation::ApplyGravity(std::vector<nbp::AbstractBody*> body_p
 std::vector<nbp::vector2<double>> nbp::GravitySimulation::get_system_forces(std::vector<nbp::AbstractBody*> body_ptrs)
 {
   std::vector<nbp::vector2<double>> force_sums( body_ptrs.size(), {0, 0});
+  nbp::vector2<double> force;
   for (size_t i = 0; i < body_ptrs.size(); i++) 
   {
     for (size_t j = i + 1; j < body_ptrs.size(); j++) 
     {
-      nbp::vector2<double> force = get_pair_force(body_ptrs[i], body_ptrs[j]);
+      force = get_pair_force(body_ptrs[i], body_ptrs[j]);
       force_sums[i].x += force.x;
       force_sums[i].y += force.y;
 

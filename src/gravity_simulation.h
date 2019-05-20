@@ -1,5 +1,5 @@
-#ifndef BODY_PROC_H
-#define BODY_PROC_H
+#ifndef GRAVITY_SIMULATION_H
+#define GRAVITY_SIMULATION_H
 
 #include <cmath>
 #include <cstdlib>

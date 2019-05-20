@@ -13,12 +13,14 @@
 
 namespace nbp = n_body_problem;
 
-size_t nbp::Body::traj_length = 100;
+size_t nbp::Body::traj_length = 100; // default hard-coded length of trajectory
 
 constexpr char conf_file[] = "config/n-body-problem.conf";
 
-int main(int argc, char **argv) {
-  if (argv[1] == NULL) {
+int main(int argc, char **argv) 
+{
+  if (argv[1] == NULL) 
+  {
     std::cout << "Specify a simulation setup file!" << std::endl;
     return 1;
   }
@@ -63,6 +65,9 @@ int main(int argc, char **argv) {
   double time_scale,
          draw_scale;
   setup_file >> body_cnt >> time_scale >> draw_scale;
+
+  nbp::Body::traj_length /= time_scale; // makes the length of trajectories be same at different time scale (aka speed of simulation)
+
   std::vector<nbp::Body> bodies(body_cnt);
   for (size_t i = 0; i < body_cnt; i++) 
   {
@@ -117,7 +122,6 @@ int main(int argc, char **argv) {
       main_win.clear();
       for (auto& body : bodies)
         main_win.draw(body);
-      
       main_win.display();
     }
   }

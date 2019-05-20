@@ -21,7 +21,6 @@ struct AbstractBody {
   virtual ~AbstractBody();
 	virtual void ApplyForce(vector2<double> force, double timeshift);
 	virtual void MoveToNextTimePoint();
-  // virtual void Render(double scale) const = 0;
 
 	vector2<double> pos_curr;
 	vector2<double> pos_new;

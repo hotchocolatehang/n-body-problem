@@ -3,19 +3,19 @@
 namespace nbp = n_body_problem;
 
 nbp::AbstractBody::AbstractBody() :
-  pos_curr ({0, 0}),
-  pos_new ({0, 0}),
-  velocity ({0, 0}),
+  pos_curr (0, 0),
+  pos_new (0, 0),
+  velocity (0, 0),
   mass (1)
 {
 
 };
 
 nbp::AbstractBody::AbstractBody(double x_pos, double y_pos, double x_vel, double y_vel, long double m) :
-  pos_curr ({x_pos, y_pos}),
-  pos_new ({x_pos, y_pos}),
-  velocity ({x_vel, y_vel}),
-  mass(m)
+  pos_curr (x_pos, y_pos),
+  pos_new (x_pos, y_pos),
+  velocity (x_vel, y_vel),
+  mass (m)
 {
   
 };
@@ -24,7 +24,7 @@ nbp::AbstractBody::AbstractBody(vector2<double> pos, vector2<double> vel, long d
   pos_curr (pos),
   pos_new (pos),
   velocity (vel),
-  mass(m)
+  mass (m)
 {
   
 };
