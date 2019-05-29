@@ -1,14 +1,17 @@
-all: sim_debug sim_release
-
 project_files = src/abstract_body.cpp src/body.cpp src/gravity_simulation.cpp
 dependencies = -lsfml-graphics -lsfml-window -lsfml-system
+app_name = N_Body_Problem
 
-sim_debug:
-	g++ -g -std=c++17 -Wall -o bin/simulation_debug src/main.cpp \
+all: debug release
+
+debug:
+	g++ -g -std=c++17 -Wall -o bin/$(app_name)_debug src/main.cpp \
 $(project_files) \
 $(dependencies)
 
-sim_release:
-	g++ -O2 -std=c++17 -Wall -o bin/simulation_release src/main.cpp \
+release:
+	g++ -O2 -std=c++17 -Wall -o bin/$(app_name)_release src/main.cpp \
 $(project_files) \
 $(dependencies)
+	rm ./$(app_name)
+	ln --symbolic -T ./bin/$(app_name)_release ./$(app_name)

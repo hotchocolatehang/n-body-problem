@@ -3,8 +3,11 @@
 #ifndef BODY_H
 #define BODY_H
 
-#include <SFML/Graphics.hpp>
+#include <array>
 #include <string>
+#include <vector>
+
+#include <SFML/Graphics.hpp>
 
 #include "abstract_body.h"
 
@@ -26,9 +29,10 @@ private:
   virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
   sf::Color color;
   sf::CircleShape shape;
-  // TODO: change trajectory to std::array
+  // TODO: change vector to dynarray
   std::vector<sf::Vertex> trajectory_;
-  int traj_begin_;
+  size_t traj_pos_;
+  size_t traj_begin_;
 }; // class body_interface
 
 } // namespace n_body_problem

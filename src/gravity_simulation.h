@@ -2,7 +2,7 @@
 #define GRAVITY_SIMULATION_H
 
 #include <cmath>
-#include <cstdlib>
+
 #include <vector>
 
 #include "abstract_body.h"
@@ -18,12 +18,15 @@ namespace n_body_problem {
      * Works for the exact point in time and if there are no other
      * forces. If you just need vectorized forces use get_system_forces().
      */
-    void ApplyGravity(std::vector<AbstractBody*> body_ptrs);
+    void ApplyGravity(std::vector<AbstractBody*>::iterator begin, std::vector<AbstractBody*>::iterator end);
 
     /**
-     * Returns a vector of gravitational forces to every body in the system.
+     * Stores a gravitational forces to every body in the system to a given vector.
      */
-    std::vector<vector2<double>> get_system_forces(std::vector<AbstractBody*> body_ptrs);
+    void get_system_forces(std::vector<AbstractBody*>::iterator body_begin,
+        std::vector<AbstractBody*>::iterator body_end,
+        std::vector<vector2<double>>::iterator forces_begin,
+        std::vector<vector2<double>>::iterator forces_end);
 
     /**
      * Returns gravitational force for first_body made by both.
@@ -36,7 +39,7 @@ namespace n_body_problem {
     GravitySimulation(GravitySimulation const&& other);
 
     double timeshift;
-    const double grav_const = 6.674E-11;
+    const double grav_const = 6.67408313131E-11;
   };
 
 } // namespace n_body_problem

@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
@@ -66,7 +67,8 @@ int main(int argc, char **argv)
          draw_scale;
   setup_file >> body_cnt >> time_scale >> draw_scale;
 
-  nbp::Body::traj_length /= time_scale; // makes the length of trajectories be same at different time scale (aka speed of simulation)
+  // TODO: solve this bug. Cant process timescale > 100 because of:
+  // nbp::Body::traj_length /= time_scale; // makes the length of trajectories be same at different time scale (aka speed of simulation)
 
   std::vector<nbp::Body> bodies(body_cnt);
   for (size_t i = 0; i < body_cnt; i++) 
@@ -102,19 +104,23 @@ int main(int argc, char **argv)
   {
     while (main_win.pollEvent(win_event))
     {
-      if (win_event.type == sf::Event::Closed)
+      if (win_event.type == sf::Event::Closed) {
         main_win.close();
+        break;
+      }
       if (win_event.type == sf::Event::KeyPressed) 
       {
         if (win_event.key.code == sf::Keyboard::Key::Space)
           paused = !paused;
-        if (win_event.key.code == sf::Keyboard::Key::Escape)
+        if (win_event.key.code == sf::Keyboard::Key::Escape) {
           main_win.close();
+          break;
+        }
       }
     }
 
     if (!paused) {
-      sim.ApplyGravity(bodies_ptrs);
+      sim.ApplyGravity(bodies_ptrs.begin(), bodies_ptrs.end());
 
       for (auto& body: bodies_ptrs)
         body -> MoveToNextTimePoint();
