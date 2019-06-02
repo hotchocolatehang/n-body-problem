@@ -2,15 +2,16 @@
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
+#include <memory>
 #include <iostream>
 #include <vector>
 
 #include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
 
 #include "abstract_body.h"
 #include "body.h"
 #include "gravity_simulation.h"
+#include "nbp_gui.h"
 
 namespace nbp = n_body_problem;
 
@@ -22,13 +23,14 @@ int main(int argc, char **argv)
 {
   if (argv[1] == NULL) 
   {
-    std::cout << "Specify a simulation setup file!" << std::endl;
+    std::cerr << "Specify a simulation setup file!" << std::endl;
     return 1;
   }
 
   // application setup
   int win_width = 800,
       win_height = 600;
+  double click_precision = 10;
   std::fstream setup_file(conf_file);
   if (setup_file.good())
   {
@@ -44,6 +46,10 @@ int main(int argc, char **argv)
         setup_file >> parameter >> win_width;
       else if (parameter == "trajectory_length")
         setup_file >> parameter >> nbp::Body::traj_length;
+      else if (parameter == "click_precision") {
+        setup_file >> parameter >> click_precision;
+        click_precision *= click_precision;
+      }
     };
   }
   else
@@ -62,13 +68,14 @@ int main(int argc, char **argv)
     std::cerr << "Error: Can't open simulation file '" << argv[1] << "'.\n";
     return 1;
   }
+
   size_t body_cnt;
-  double time_scale,
+  double delta_time,
          draw_scale;
-  setup_file >> body_cnt >> time_scale >> draw_scale;
+  setup_file >> body_cnt >> delta_time >> draw_scale;
 
   // TODO: solve this bug. Cant process timescale > 100 because of:
-  // nbp::Body::traj_length /= time_scale; // makes the length of trajectories be same at different time scale (aka speed of simulation)
+  // nbp::Body::traj_length /= delta_time; // makes the length of trajectories be same at different time scale (aka speed of simulation)
 
   std::vector<nbp::Body> bodies(body_cnt);
   for (size_t i = 0; i < body_cnt; i++) 
@@ -88,17 +95,30 @@ int main(int argc, char **argv)
   setup_file.close();
 
   // simulation
-  nbp::GravitySimulation sim(time_scale);
+  nbp::GravitySimulation sim(delta_time);
 
   std::vector<nbp::AbstractBody*> bodies_ptrs(body_cnt);
   for (size_t i = 0; i < body_cnt; i++)
     bodies_ptrs[i] = &(bodies[i]);
 
+  // buttons:
+  std::vector<std::pair<nbp::gui::Button, std::function<void()>>> buttons(1);
+  buttons[0].first.setTexture("res/buttons/pause.png");
+  buttons[0].first.setPosition(sf::Vector2f(0, win_height - 30));
+  
+  nbp::gui::CelestialObjectInfo obj_info;
+
+  bool obj_info_showed = false;
+  bool paused = false;
+  auto PauseSimulation = [&paused]() {
+    paused = !paused;
+  };
+
+  buttons[0].second = PauseSimulation;
+
   sf::RenderWindow main_win (sf::VideoMode(win_width, win_height), window_name);
   // sf::ContextSettings settings;
   // settings.antialiasingLevel = 8;
-  
-  bool paused = false;
   sf::Event win_event;
   while (main_win.isOpen())
   {
@@ -108,15 +128,48 @@ int main(int argc, char **argv)
         main_win.close();
         break;
       }
-      if (win_event.type == sf::Event::KeyPressed) 
+      else if (win_event.type == sf::Event::KeyPressed) 
       {
         if (win_event.key.code == sf::Keyboard::Key::Space)
-          paused = !paused;
-        if (win_event.key.code == sf::Keyboard::Key::Escape) {
+          PauseSimulation();
+        if (win_event.key.code == sf::Keyboard::Key::Escape) 
+        {
           main_win.close();
           break;
         }
       }
+    }
+
+    // control handling
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
+    {
+      sf::Vector2i pressed = sf::Mouse::getPosition(main_win);
+      for (auto& i : buttons) {
+        auto& button_pos = i.first.img.getPosition();
+        if (button_pos.x < pressed.x && button_pos.x + i.first.width > pressed.x
+        &&  button_pos.y < pressed.y && button_pos.y + i.first.width > pressed.y
+        /*&& set time or smth to make buttons work correct because single human click is actually multiple clicks*/) {
+          i.second();
+          break;
+        }
+      }
+
+      for (auto& body : bodies) {
+            if (body.pos_curr.x - body.shape.getRadius() < pressed.x
+            &&  body.pos_curr.x + body.shape.getRadius() > pressed.x
+            && obj_info.getBodyPtr() != &body) 
+            {
+              double distance_sq = fabs(
+                      pow((double)pressed.x - body.pos_curr.x, 2) +
+                      pow((double)pressed.y - body.pos_curr.y, 2));
+              if (distance_sq <= pow(body.shape.getRadius(), 2)) 
+              {
+                obj_info = nbp::gui::CelestialObjectInfo(body);
+                obj_info_showed = true;
+                break;
+              }
+            }
+          }
     }
 
     if (!paused) {
@@ -124,12 +177,20 @@ int main(int argc, char **argv)
 
       for (auto& body: bodies_ptrs)
         body -> MoveToNextTimePoint();
-
-      main_win.clear();
-      for (auto& body : bodies)
-        main_win.draw(body);
-      main_win.display();
     }
+    main_win.clear();
+    for (auto& body : bodies)
+      main_win.draw(body);
+
+    for (auto& i : buttons)
+      main_win.draw(i.first);
+
+    if (obj_info_showed) {
+      obj_info.UpdateInfo(delta_time);
+      main_win.draw(obj_info);
+    }
+
+    main_win.display();
   }
 
   return 0;

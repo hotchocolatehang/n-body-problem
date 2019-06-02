@@ -24,11 +24,11 @@ public:
 
   vector2<double> pos_old;
   static size_t traj_length;
+  sf::Color color;
+  sf::CircleShape shape;
 
 private:
   virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
-  sf::Color color;
-  sf::CircleShape shape;
   // TODO: change vector to dynarray
   std::vector<sf::Vertex> trajectory_;
   size_t traj_pos_;

@@ -8,9 +8,12 @@
 #include "abstract_body.h"
 
 namespace n_body_problem {
+
+  constexpr double GRAV_CONST = 6.67408313131E-11;
+
   class GravitySimulation {
   public:
-    GravitySimulation(double _timeshift);
+    GravitySimulation(double _delta_time);
     ~GravitySimulation();
 
     /**
@@ -38,8 +41,7 @@ namespace n_body_problem {
     GravitySimulation(GravitySimulation const& other);
     GravitySimulation(GravitySimulation const&& other);
 
-    double timeshift;
-    const double grav_const = 6.67408313131E-11;
+    double delta_time;
   };
 
 } // namespace n_body_problem
