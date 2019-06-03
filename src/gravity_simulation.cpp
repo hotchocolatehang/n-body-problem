@@ -60,3 +60,8 @@ nbp::vector2<double> nbp::GravitySimulation::get_pair_force (nbp::AbstractBody *
   ret = {force * raduis_vec.x, force * raduis_vec.y};
   return ret;
 };
+
+void nbp::GravitySimulation::set_delta_time(double _delta_time)
+{
+  delta_time = _delta_time;
+}

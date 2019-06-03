@@ -17,21 +17,20 @@ namespace nbp = n_body_problem;
 
 nbp::gui::Button::Button(std::string path, sf::Vector2f pos)
 {
-  if (!texture_.loadFromFile(path))
-    throw std::exception();
-  img.setTexture(texture_);
+  InitTexture(path);
+  img.setTexture(*texture_);
   img.setPosition(pos);
   SetUp();
 };
 
-void nbp::gui::Button::setTexture(std::string path)
-{
-  sf::Texture new_texture;
-  if (!new_texture.loadFromFile(path))
-    throw std::exception();
-  std::swap(texture_, new_texture);
-  SetUp();
-};
+// void nbp::gui::Button::setTexture(std::string path)
+// {
+//   sf::Texture new_texture;
+//   if (!new_texture.loadFromFile(path))
+//     throw std::exception();
+//   std::swap(texture_, new_texture);
+//   SetUp();
+// };
 
 void nbp::gui::Button::setPosition(sf::Vector2f pos)
 {
@@ -45,11 +44,18 @@ void nbp::gui::Button::draw(sf::RenderTarget& target, sf::RenderStates states) c
 
 void nbp::gui::Button::SetUp()
 {
-  img.setTexture(texture_);
-  img.setScale(sf::Vector2f(0.1, 0.1));
-  width = texture_.getSize().x;
-  height = texture_.getSize().y;
-}
+  img.setTexture(*texture_);
+  img.setScale(sf::Vector2f(0.23, 0.23));
+  width = texture_->getSize().x * 0.23;
+  height = texture_->getSize().y * 0.23;
+};
+
+void nbp::gui::Button::InitTexture(std::string path) {
+  if (texture_.use_count() == 0)
+    texture_ = std::make_shared<sf::Texture> (sf::Texture());
+  if (!texture_->loadFromFile(path))
+    throw std::exception();
+};
 
 nbp::gui::CelestialObjectInfo::CelestialObjectInfo(nbp::Body& _body) :
   position({0, 10}),
@@ -91,30 +97,18 @@ nbp::gui::CelestialObjectInfo::CelestialObjectInfo(nbp::Body& _body) :
   gravity.setPosition(position);
 
   Classify();
-}
+};
 
-void nbp::gui::CelestialObjectInfo::UpdateInfo(double delta_time)
+void nbp::gui::CelestialObjectInfo::UpdateInfo()
 {
-  // sf::Vector2f pos(body_->pos_curr.x, body_->pos_curr.y);
-  // float offset = (double)type.getCharacterSize() + 5;
-  // type.setPosition(pos);
-  // pos.y += offset;
-  // class_of_obj.setPosition(pos);
-  // pos.y += offset;
-  // radius.setPosition(pos);
-  // pos.y += offset;
-  // velocity.setPosition(pos);
-  // pos.y += offset;
-  // gravity.setPosition(pos);
-
-  float vel = sqrt( pow(body_->velocity.x, 2) + pow(body_->velocity.y, 2) ) / delta_time;
-  velocity.setString(boost::lexical_cast<std::string>(vel) + " px/s");
+  float vel = sqrt( pow(body_->velocity.x, 2) + pow(body_->velocity.y, 2) );
+  velocity.setString(boost::lexical_cast<std::string>(vel) + " px per s");
 };
 
 nbp::Body* nbp::gui::CelestialObjectInfo::getBodyPtr()
 {
   return body_;
-}
+};
 
 void nbp::gui::CelestialObjectInfo::Classify()
 {
@@ -133,14 +127,14 @@ void nbp::gui::CelestialObjectInfo::Classify()
 void nbp::gui::CelestialObjectInfo::InitFont(std::string name)
 {
   if(font_.use_count() == 0)
-    font_ = std::shared_ptr<sf::Font>(new sf::Font);
+    font_ = std::make_shared<sf::Font>(sf::Font());
   if (!font_->loadFromFile(name))
   {
     // TODO: make exceptions over all the project
     std::cerr << "Error: Can't open font file '" << name << "'\n";
     throw std::exception();
   };
-}
+};
 
 void nbp::gui::CelestialObjectInfo::draw(sf::RenderTarget& target, sf::RenderStates states) const {
   // target.draw(cursor_);

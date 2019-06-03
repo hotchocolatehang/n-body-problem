@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <chrono>
 #include <cmath>
 #include <cstdlib>
 #include <fstream>
@@ -15,9 +16,8 @@
 
 namespace nbp = n_body_problem;
 
-size_t nbp::Body::traj_length = 100; // default hard-coded length of trajectory
-
 constexpr char conf_file[] = "config/n-body-problem.conf";
+constexpr std::chrono::duration<uint64_t, std::milli> min_time_between_clicks (200);
 
 int main(int argc, char **argv) 
 {
@@ -46,7 +46,8 @@ int main(int argc, char **argv)
         setup_file >> parameter >> win_width;
       else if (parameter == "trajectory_length")
         setup_file >> parameter >> nbp::Body::traj_length;
-      else if (parameter == "click_precision") {
+      else if (parameter == "click_precision") 
+      {
         setup_file >> parameter >> click_precision;
         click_precision *= click_precision;
       }
@@ -101,30 +102,45 @@ int main(int argc, char **argv)
   for (size_t i = 0; i < body_cnt; i++)
     bodies_ptrs[i] = &(bodies[i]);
 
-  // buttons:
-  std::vector<std::pair<nbp::gui::Button, std::function<void()>>> buttons(1);
-  buttons[0].first.setTexture("res/buttons/pause.png");
-  buttons[0].first.setPosition(sf::Vector2f(0, win_height - 30));
-  
   nbp::gui::CelestialObjectInfo obj_info;
 
-  bool obj_info_showed = false;
+  bool info_shown = false;
   bool paused = false;
-  auto PauseSimulation = [&paused]() {
+  auto PauseSimulation = [&paused]()
+  {
     paused = !paused;
   };
+  auto IncreaseTimeScale = [&delta_time, &sim]
+  {
+    delta_time *= 2;
+    sim.set_delta_time(delta_time);
+  };
+  auto DecreaseTimeScale = [&delta_time, &sim]
+  {
+    delta_time /= 2;
+    sim.set_delta_time(delta_time);
+  };
 
-  buttons[0].second = PauseSimulation;
+  // buttons:
+  std::vector<std::pair<nbp::gui::Button, std::function<void()>>> buttons = {
+    {nbp::gui::Button("res/buttons/decrease_time.png", sf::Vector2f(0, win_height - 30)), DecreaseTimeScale},
+    {nbp::gui::Button("res/buttons/play.png", sf::Vector2f(30, win_height - 30)), PauseSimulation},
+    {nbp::gui::Button("res/buttons/increase_time.png", sf::Vector2f(60, win_height - 30)), IncreaseTimeScale}
+    // TODO (not for MVP): show/hide trajectories, show/hide velocities
+  };
+
 
   sf::RenderWindow main_win (sf::VideoMode(win_width, win_height), window_name);
-  // sf::ContextSettings settings;
-  // settings.antialiasingLevel = 8;
   sf::Event win_event;
+  auto last_click_time = std::chrono::system_clock::now();
+
+  // main window cycle
   while (main_win.isOpen())
   {
     while (main_win.pollEvent(win_event))
     {
-      if (win_event.type == sf::Event::Closed) {
+      if (win_event.type == sf::Event::Closed)
+      {
         main_win.close();
         break;
       }
@@ -143,36 +159,43 @@ int main(int argc, char **argv)
     // control handling
     if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
     {
-      sf::Vector2i pressed = sf::Mouse::getPosition(main_win);
-      for (auto& i : buttons) {
-        auto& button_pos = i.first.img.getPosition();
-        if (button_pos.x < pressed.x && button_pos.x + i.first.width > pressed.x
-        &&  button_pos.y < pressed.y && button_pos.y + i.first.width > pressed.y
-        /*&& set time or smth to make buttons work correct because single human click is actually multiple clicks*/) {
-          i.second();
-          break;
+      auto click_moment = std::chrono::system_clock::now();
+      if (click_moment - last_click_time >= min_time_between_clicks) 
+      {
+        last_click_time = click_moment;
+        sf::Vector2i pressed = sf::Mouse::getPosition(main_win);
+        for (auto& i : buttons) 
+        {
+          auto& button_pos = i.first.img.getPosition();
+          if (button_pos.x < pressed.x && button_pos.x + i.first.width > pressed.x
+          &&  button_pos.y < pressed.y && button_pos.y + i.first.width > pressed.y) 
+          {
+            i.second();
+            break;
+          }
         }
-      }
 
-      for (auto& body : bodies) {
-            if (body.pos_curr.x - body.shape.getRadius() < pressed.x
-            &&  body.pos_curr.x + body.shape.getRadius() > pressed.x
-            && obj_info.getBodyPtr() != &body) 
+        for (auto& body : bodies) {
+          if (body.pos_curr.x - body.shape.getRadius() < pressed.x
+          &&  body.pos_curr.x + body.shape.getRadius() > pressed.x
+          && obj_info.getBodyPtr() != &body) 
+          {
+            double distance_sq = fabs(
+                    pow((double)pressed.x - body.pos_curr.x, 2) +
+                    pow((double)pressed.y - body.pos_curr.y, 2));
+            if (distance_sq <= pow(body.shape.getRadius(), 2)) 
             {
-              double distance_sq = fabs(
-                      pow((double)pressed.x - body.pos_curr.x, 2) +
-                      pow((double)pressed.y - body.pos_curr.y, 2));
-              if (distance_sq <= pow(body.shape.getRadius(), 2)) 
-              {
-                obj_info = nbp::gui::CelestialObjectInfo(body);
-                obj_info_showed = true;
-                break;
-              }
+              obj_info = nbp::gui::CelestialObjectInfo(body);
+              info_shown = true;
+              break;
             }
           }
+        }
+      }
     }
 
-    if (!paused) {
+    if (!paused) 
+    {
       sim.ApplyGravity(bodies_ptrs.begin(), bodies_ptrs.end());
 
       for (auto& body: bodies_ptrs)
@@ -182,11 +205,12 @@ int main(int argc, char **argv)
     for (auto& body : bodies)
       main_win.draw(body);
 
-    for (auto& i : buttons)
-      main_win.draw(i.first);
+    for (auto& button : buttons)
+      main_win.draw(button.first);
 
-    if (obj_info_showed) {
-      obj_info.UpdateInfo(delta_time);
+    if (info_shown) 
+    {
+      obj_info.UpdateInfo();
       main_win.draw(obj_info);
     }
 

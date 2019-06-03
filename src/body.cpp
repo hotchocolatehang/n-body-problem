@@ -5,6 +5,8 @@
 
 namespace nbp = n_body_problem;
 
+size_t nbp::Body::traj_length = 100; // default hard-coded length of trajectory
+
 nbp::Body::Body()
   : AbstractBody(),
   pos_old (0, 0),

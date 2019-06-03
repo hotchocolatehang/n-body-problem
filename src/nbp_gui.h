@@ -30,8 +30,9 @@ public:
 private:
   virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
   void SetUp();
+  void InitTexture(std::string path);
 
-  sf::Texture texture_;
+  std::shared_ptr<sf::Texture> texture_;
 };
 
 class CelestialObjectInfo : public sf::Drawable {
@@ -39,7 +40,7 @@ public:
   CelestialObjectInfo() = default;
   CelestialObjectInfo(Body& _body);
 
-  void UpdateInfo(double delta_time);
+  void UpdateInfo();
   Body* getBodyPtr();
 
   sf::Text type,

@@ -37,6 +37,8 @@ namespace n_body_problem {
      */
     vector2<double> get_pair_force (AbstractBody *first_body, AbstractBody *second_body);
 
+    void set_delta_time(double _delta_time);
+
   private:
     GravitySimulation(GravitySimulation const& other);
     GravitySimulation(GravitySimulation const&& other);
