@@ -16,3 +16,6 @@ $(dependencies) \
 2> errors.log
 	rm ./$(app_name)
 	ln --symbolic -T ./bin/$(app_name)_release ./$(app_name)
+
+generator:
+	g++ -std=c++17 -Wall -o bin/generate src/model_generator.cpp

@@ -1,7 +1,31 @@
+/**
+MIT License
+
+Copyright (c) 2019 Alexandr Krikun
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE. 
+ */
+
 #include "nbp_gui.h"
 
-#include <iostream>
 #include <cmath>
+#include <iostream>
 #include <memory>
 #include <string>
 #include <vector>
@@ -22,15 +46,6 @@ nbp::gui::Button::Button(std::string path, sf::Vector2f pos)
   img.setPosition(pos);
   SetUp();
 };
-
-// void nbp::gui::Button::setTexture(std::string path)
-// {
-//   sf::Texture new_texture;
-//   if (!new_texture.loadFromFile(path))
-//     throw std::exception();
-//   std::swap(texture_, new_texture);
-//   SetUp();
-// };
 
 void nbp::gui::Button::setPosition(sf::Vector2f pos)
 {
@@ -73,30 +88,27 @@ nbp::gui::CelestialObjectInfo::CelestialObjectInfo(nbp::Body& _body) :
     position.y += offset;
   }
   
-  titles[0].setString("Type");
-  titles[1].setString("Class");
-  titles[2].setString("Radius");
-  titles[3].setString("Velocity");
-  titles[4].setString("Gravity");
+  titles[0].setString("Radius");
+  titles[1].setString("Velocity");
+  titles[2].setString("Mass");
+  titles[3].setString("Gravity");
 
   position.x += 110;
-  position.y -= offset * 5;
+  position.y -= offset * titles.size();
 
-  type.setFillColor(sf::Color::White);
-  type.setFont(*font_);
-  type.setCharacterSize(text_size_);
-  type.setPosition(position);
-  class_of_obj = radius = velocity = gravity = type;
-  position.y += offset;
-  class_of_obj.setPosition(position);
-  position.y += offset;
+  radius.setFillColor(sf::Color::White);
+  radius.setFont(*font_);
+  radius.setCharacterSize(text_size_);
   radius.setPosition(position);
+  velocity = gravity = mass = radius;
   position.y += offset;
   velocity.setPosition(position);
   position.y += offset;
+  mass.setPosition(position);
+  position.y += offset;
   gravity.setPosition(position);
 
-  Classify();
+  DeduceInfo();
 };
 
 void nbp::gui::CelestialObjectInfo::UpdateInfo()
@@ -110,17 +122,14 @@ nbp::Body* nbp::gui::CelestialObjectInfo::getBodyPtr()
   return body_;
 };
 
-void nbp::gui::CelestialObjectInfo::Classify()
+void nbp::gui::CelestialObjectInfo::DeduceInfo()
 {
-  // TODO: real classifyer
-  std::string _type("Planet");
-  std::string _class("Terra");
   float _radius = body_->shape.getRadius();
+  float _mass = body_->mass;
   float _gravity = nbp::GRAV_CONST * body_->mass / pow(_radius, 2);
 
-  type.setString(_type);
-  class_of_obj.setString(_class);
-  radius.setString(boost::lexical_cast<std::string>(_radius));
+  radius.setString(boost::lexical_cast<std::string>(_radius) + " px");
+  mass.setString(boost::lexical_cast<std::string>(_mass) + " kg");
   gravity.setString(boost::lexical_cast<std::string>(_gravity) + " g");
 };
 
@@ -137,12 +146,10 @@ void nbp::gui::CelestialObjectInfo::InitFont(std::string name)
 };
 
 void nbp::gui::CelestialObjectInfo::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-  // target.draw(cursor_);
   for (auto& i : titles)
     target.draw(i);
-  target.draw(type);
-  target.draw(class_of_obj);
   target.draw(radius);
   target.draw(velocity);
+  target.draw(mass);
   target.draw(gravity);
 };
