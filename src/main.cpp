@@ -29,6 +29,7 @@ SOFTWARE.
 #include <fstream>
 #include <memory>
 #include <iostream>
+#include <thread>
 #include <vector>
 
 #include <SFML/Graphics.hpp>
@@ -42,6 +43,7 @@ namespace nbp = n_body_problem;
 
 constexpr char conf_file[] = "config/n-body-problem.conf";
 constexpr std::chrono::duration<uint64_t, std::milli> min_time_between_clicks (200);
+constexpr std::chrono::duration<uint64_t, std::ratio<1L, 100000L>> frame_max_time(3032); // = 30.32 ms
 
 int main(int argc, char **argv) 
 {
@@ -119,6 +121,8 @@ int main(int argc, char **argv)
   }
   setup_file.close();
 
+  delta_time /= 30;
+
   // simulation
   nbp::GravitySimulation sim(delta_time);
 
@@ -157,6 +161,7 @@ int main(int argc, char **argv)
   sf::RenderWindow main_win (sf::VideoMode(win_width, win_height), window_name);
   sf::Event win_event;
   auto last_click_time = std::chrono::system_clock::now();
+  auto frame_start_time = std::chrono::system_clock::now();
 
   // main window cycle
   while (main_win.isOpen())
@@ -238,7 +243,13 @@ int main(int argc, char **argv)
       main_win.draw(obj_info);
     }
 
+    auto frame_calc_time = std::chrono::system_clock::now() - frame_start_time;
+    if (frame_calc_time < frame_max_time)
+      std::this_thread::sleep_for(frame_max_time - frame_calc_time);
+
     main_win.display();
+
+    frame_start_time = std::chrono::system_clock::now();
   }
 
   return 0;
