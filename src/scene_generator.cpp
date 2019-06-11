@@ -72,7 +72,7 @@ int main (int argc, char **argv)
 
   srand((std::chrono::system_clock::now().time_since_epoch()).count());
 
-  char path[] = "models/";
+  char path[] = "scenes/";
   strcat(path, filename);
   strcat(path, ".simsetup");
   std::fstream model_file(path, std::ios_base::out);
