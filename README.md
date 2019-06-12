@@ -5,6 +5,8 @@ A simple program to simulate gravitational interaction of N given bodies.
 I've made this application as my project for "summer practice" in my university.
 
 ## Building
+Everything works fine on Debian 9.9 Stretch x64.
+
 As long as the application requires SFML make sure you have all libsfml packages installed, including libsfml-dev.
 
 To build the app just type
@@ -18,8 +20,6 @@ To create model generator execute
 $ make generator
 ```
 which will create bin/generate .
-
-Everything works fine on Debian 9.9 Stretch x64.
 
 ## Usage
 
@@ -41,7 +41,7 @@ what timescale you need by adding -t \<time scale>:
 $ ./bin/generate -f new_scene -n 100 -t 0.03
 $ ./bin/N_Body_Problem new_scene.simsetup
 ```
-As you can see the scene generator adds .simsetup to a given filename and saves generated result in scenes/ folder.
+As you can see the scene generator adds .simsetup to a given filename.
 
 ### Scene format
 
@@ -77,4 +77,4 @@ is to inherit your class from n_body_problem::AbstractBody
 and then construct your class properly.
 After this you can enjoy all the possibilities of gravity just by creating an object of
 n_body_problem::GravitySimulation class and using it's methods with correct parameters.
-Keep in mind that every vectorized value is an instance of n_body_problem::vector2<> class./
+Keep in mind that every vectorized value is an instance of n_body_problem::vector2<> class.

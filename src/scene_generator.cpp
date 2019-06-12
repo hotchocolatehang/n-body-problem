@@ -72,10 +72,8 @@ int main (int argc, char **argv)
 
   srand((std::chrono::system_clock::now().time_since_epoch()).count());
 
-  char path[] = "scenes/";
-  strcat(path, filename);
-  strcat(path, ".simsetup");
-  std::fstream model_file(path, std::ios_base::out);
+  strcat(filename, ".simsetup");
+  std::fstream model_file(filename, std::ios_base::out);
   if (!model_file.good()) {
     std::cerr << "Couldn't open a file!\n";
     return 1;
