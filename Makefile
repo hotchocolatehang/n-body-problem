@@ -12,8 +12,7 @@ $(dependencies)
 release:
 	g++ -O2 -std=c++17 -Wall -o bin/$(app_name) src/main.cc \
 $(project_files) \
-$(dependencies) \
-2> errors.log
+$(dependencies)
 
 generator:
 	g++ -std=c++17 -Wall -o bin/generate src/scene_generator.cc
