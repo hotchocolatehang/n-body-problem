@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. 
  */
 
-#ifndef BODY_H
-#define BODY_H
+#ifndef N_BODY_PROBLEM_BODY_H_
+#define N_BODY_PROBLEM_BODY_H_
 
 #include <array>
 #include <string>
@@ -31,7 +31,7 @@ SOFTWARE.
 
 #include <SFML/Graphics.hpp>
 
-#include "abstract_body.h"
+#include "physics/abstract_body.h"
 
 namespace n_body_problem {
 
@@ -59,4 +59,4 @@ private:
 
 } // namespace n_body_problem
 
-#endif
+#endif // N_BODY_PROBLEM_NBP_GUI_H_

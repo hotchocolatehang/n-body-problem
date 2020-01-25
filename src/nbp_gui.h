@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. 
  */
 
-#ifndef NBP_GUI_H
-#define NBP_GUI_H
+#ifndef N_BODY_PROBLEM_NBP_GUI_H_
+#define N_BODY_PROBLEM_NBP_GUI_H_
 
 #include <cmath>
 #include <iostream>
@@ -34,9 +34,9 @@ SOFTWARE.
 #include <boost/lexical_cast.hpp>
 #include <SFML/Graphics.hpp>
 
-#include "abstract_body.h"
 #include "body.h"
-#include "gravity_simulation.h"
+#include "physics/abstract_body.h"
+#include "physics/gravity_simulation.h"
 
 namespace n_body_problem {
   namespace gui {
@@ -85,4 +85,4 @@ private:
   }; // namespace gui
 }; // namespace n_body_problem
 
-#endif
+#endif // N_BODY_PROBLEM_NBP_GUI_H_

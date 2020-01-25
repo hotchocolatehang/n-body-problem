@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. 
  */
 
-#ifndef ABSTRACT_BODY_H
-#define ABSTRACT_BODY_H
+#ifndef N_BODY_PROBLEM_PHYSICS_ABSTRACT_BODY_H_
+#define N_BODY_PROBLEM_PHYSICS_ABSTRACT_BODY_H_
 
 namespace n_body_problem {
 
@@ -52,4 +52,4 @@ struct AbstractBody {
 
 } // namespace n_body_problem
 
-#endif
+#endif // N_BODY_PROBLEM_PHYSICS_ABSTRACT_BODY_H_

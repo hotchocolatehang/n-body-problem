@@ -30,7 +30,7 @@ SOFTWARE.
 
 #include <SFML/Graphics.hpp>
 
-#include "abstract_body.h"
+#include "physics/abstract_body.h"
 
 namespace nbp = n_body_problem;
 

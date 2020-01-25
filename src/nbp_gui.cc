@@ -33,9 +33,9 @@ SOFTWARE.
 #include <boost/lexical_cast.hpp>
 #include <SFML/Graphics.hpp>
 
-#include "abstract_body.h"
 #include "body.h"
-#include "gravity_simulation.h"
+#include "physics/abstract_body.h"
+#include "physics/gravity_simulation.h"
 
 namespace nbp = n_body_problem;
 

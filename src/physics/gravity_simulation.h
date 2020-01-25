@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE. 
  */
 
-#ifndef GRAVITY_SIMULATION_H
-#define GRAVITY_SIMULATION_H
+#ifndef N_BODY_PROBLEM_PHYSICS_GRAVITY_SIMULATION_H_
+#define N_BODY_PROBLEM_PHYSICS_GRAVITY_SIMULATION_H_
 
 #include <cmath>
 #include <vector>
@@ -71,4 +71,4 @@ namespace n_body_problem {
 
 } // namespace n_body_problem
 
-#endif
+#endif // N_BODY_PROBLEM_PHYSICS_GRAVITY_SIMULATION_H_
