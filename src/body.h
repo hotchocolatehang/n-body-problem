@@ -19,7 +19,7 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE. 
+SOFTWARE.
  */
 
 #ifndef N_BODY_PROBLEM_BODY_H_
@@ -36,11 +36,13 @@ SOFTWARE.
 namespace n_body_problem {
 
 struct Body : public AbstractBody, public sf::Drawable {
-public:
+ public:
   Body();
-  Body(double x_pos, double y_pos, double x_vel, double y_vel, long _mass, double radius, unsigned _r, unsigned _g, unsigned _b);
-	Body(vector2<double> _pos_curr, vector2<double> _velocity, long _mass, double radius, sf::Color _color);
-  Body(Body const& other);
+  Body(double x_pos, double y_pos, double x_vel, double y_vel, long _mass,
+       double radius, unsigned _r, unsigned _g, unsigned _b);
+  Body(vector2<double> _pos_curr, vector2<double> _velocity, long _mass,
+       double radius, sf::Color _color);
+  Body(Body const &other);
   ~Body() override;
   void MoveToNextTimePoint() override;
 
@@ -49,14 +51,14 @@ public:
   sf::Color color;
   sf::CircleShape shape;
 
-private:
-  virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+ private:
+  virtual void draw(sf::RenderTarget &target, sf::RenderStates states) const;
   // TODO: change vector to dynarray
   std::vector<sf::Vertex> trajectory_;
   size_t traj_pos_;
   size_t traj_begin_;
-}; // struct Body
+};  // struct Body
 
-} // namespace n_body_problem
+}  // namespace n_body_problem
 
-#endif // N_BODY_PROBLEM_NBP_GUI_H_
+#endif  // N_BODY_PROBLEM_NBP_GUI_H_

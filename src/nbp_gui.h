@@ -19,7 +19,7 @@ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE. 
+SOFTWARE.
  */
 
 #ifndef N_BODY_PROBLEM_NBP_GUI_H_
@@ -31,26 +31,26 @@ SOFTWARE.
 #include <string>
 #include <vector>
 
-#include <boost/lexical_cast.hpp>
 #include <SFML/Graphics.hpp>
+#include <boost/lexical_cast.hpp>
 
 #include "body.h"
 #include "physics/abstract_body.h"
 #include "physics/gravity_simulation.h"
 
 namespace n_body_problem {
-  namespace gui {
+namespace gui {
 
 class Button : public sf::Drawable {
-public:
+ public:
   Button() = default;
   Button(std::string path, sf::Vector2f pos);
   void setPosition(sf::Vector2f pos);
 
-  unsigned height,
-           width;
+  unsigned height, width;
   sf::Sprite img;
-private:
+
+ private:
   virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
   void SetUp();
   void InitTexture(std::string path);
@@ -59,19 +59,16 @@ private:
 };
 
 class CelestialObjectInfo : public sf::Drawable {
-public:
+ public:
   CelestialObjectInfo() = default;
   CelestialObjectInfo(Body& _body);
 
   void UpdateInfo();
   Body* getBodyPtr();
 
-  sf::Text radius,
-           velocity,
-           mass,
-           gravity;
-  
-private:
+  sf::Text radius, velocity, mass, gravity;
+
+ private:
   void InitFont(std::string name);
   void DeduceInfo();
   virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
@@ -82,7 +79,7 @@ private:
   unsigned text_size_;
   Body* body_;
 };
-  }; // namespace gui
-}; // namespace n_body_problem
+};  // namespace gui
+};  // namespace n_body_problem
 
-#endif // N_BODY_PROBLEM_NBP_GUI_H_
+#endif  // N_BODY_PROBLEM_NBP_GUI_H_
